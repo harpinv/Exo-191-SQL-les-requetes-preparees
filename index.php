@@ -8,268 +8,286 @@
 $server = 'localhost';
 $user = 'root';
 $password = '';
-$db = 'bdd_cours';
+$db = 'table_test_phpmyadmin';
 
-function sanitize($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    $data = addslashes($data);
-    return $data;
-}
 
 try {
     /**
      * Créez ici votre objet de connection PDO, et utilisez à chaque fois le même objet $pdo ici.
      */
     $maConnexion = new PDO("mysql:host=$server;dbname=$db;charset=utf8", $user, $password);
-    $maConnexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+    $maConnexion->beginTransaction();
     /**
      * 1. Insérez un nouvel utilisateur dans la table utilisateur.
      */
 
     // TODO votre code ici.
+
+    $table_test_php_1 = $maConnexion->prepare("
+         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_join)
+         VALUES (:nom, :prenom, :email, :pass, :adresse, :code_postal, :pays, :date_join)
+    ");
+
+    $table_test_php_1->bindParam(':nom', $nom);
+    $table_test_php_1->bindParam(':prenom', $prenom);
+    $table_test_php_1->bindParam(':email', $email);
+    $table_test_php_1->bindParam(':pass', $pass);
+    $table_test_php_1->bindParam(':adresse', $adresse);
+    $table_test_php_1->bindParam(':code_postal', $code_postal);
+    $table_test_php_1->bindParam(':pays', $pays);
+    $table_test_php_1->bindParam(':date_join', $date);
+
     $dt = new DateTime();
     $date = $dt->format('Y-m-d H:i:s');
 
-    $nom = sanitize('Pit');
-    $prenom = sanitize('Brout');
-    $email = sanitize('p.brout@gmail.com');
-    $password = sanitize('4567');
-    $adresse = sanitize('2 Rue Nounou');
-    $code_postal = sanitize('59440');
-    $pays = sanitize('France');
-    $date_enregistrement = sanitize($date);
+    $nom = 'Pit';
+    $prenom = 'Brout';
+    $email = 'p.brout@gmail.com';
+    $pass = '4567';
+    $adresse = '2 Rue Nounou';
+    $code_postal = '59440';
+    $pays = 'France';
 
+    $table_test_php_1->execute();
 
-    $table_test_php = $maConnexion->prepare("
-         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_enregistrement)
-         VALUES (:Pit, :Brout, :p.brout@gmail.com, :4567, :2 Rue Nounou, :59440, :France, :$date)
-    ");
-
-    $table_test_php->bindParam(':Pit', $nom);
-    $table_test_php->bindParam(':Brout', $prenom);
-    $table_test_php->bindParam(':p.brout@gmail.com', $email);
-    $table_test_php->bindParam(':4567', $password);
-    $table_test_php->bindParam(':2 Rue Nounou', $adresse);
-    $table_test_php->bindParam(':59440', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
-
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $maConnexion->commit();
 
     /**
      * 2. Insérez un nouveau produit dans la table produit
-     */
+    */
 
     // TODO votre code ici.
 
-    $titre = sanitize('confiture');
-    $prix = sanitize('2');
-    $description_courte = sanitize('confiture de fraise');
-    $description_longue = sanitize('fraise avec du sucre et un gélifiant');
+    $maConnexion->beginTransaction();
 
-    $table_test_php = $maConnexion->prepare("
+    $table_test_php_2 = $maConnexion->prepare("
          INSERT INTO produit (titre, prix, description_courte, description_longue)
-         VALUES (:confiture, :2, :confiture de fraise, :fraise avec du sucre et un gélifiant)
+         VALUES (:titre, :prix, :description_courte, :description_longue)
     ");
 
-    $table_test_php->bindParam(':confiture', $titre);
-    $table_test_php->bindParam(':2', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':confiture de fraise', $description_courte);
-    $table_test_php->bindParam(':fraise avec du sucre et un gélifiant', $description_longue);
+    $table_test_php_2->bindParam(':titre', $titre);
+    $table_test_php_2->bindParam(':prix', $prix);
+    $table_test_php_2->bindParam(':description_courte', $description_courte);
+    $table_test_php_2->bindParam(':description_longue', $description_longue);
 
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $titre = 'confiture';
+    $prix = '2';
+    $description_courte = 'confiture de fraise';
+    $description_longue = 'fraise avec du sucre et un gélifiant';
+
+    $table_test_php_2->execute();
+
+    $maConnexion->commit();
+
     /**
      * 3. En une seule requête, ajoutez deux nouveaux utilisateurs à la table utilisateur.
-     */
+    */
 
     // TODO Votre code ici.
 
-    $nom = sanitize('Banne');
-    $nom = sanitize('Martin');
-    $prenom = sanitize('Mac');
-    $prenom = sanitize('Vom');
-    $email = sanitize('b.mac@gmail.com');
-    $email = sanitize('m.vom@gmail.com');
-    $password = sanitize('3498');
-    $password = sanitize('7102');
-    $adresse = sanitize('3 Rue du bouchon');
-    $adresse = sanitize('5 Rue melon');
-    $code_postal = sanitize('59810');
-    $code_postal = sanitize('59230');
-    $pays = sanitize('France');
-    $pays = sanitize('France');
-    $date_enregistrement = sanitize($date);
-    $date_enregistrement = sanitize($date);
+    $maConnexion->beginTransaction();
 
-    $table_test_php = $maConnexion->prepare("
-         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_enregistrement)
-         VALUES (:Banne, :Mac, :b.mac@gmail.com, :3498, :3 Rue du bouchon, :59810, :France, :$date),
-         VALUES (:Martin, :Vom, :m.vom@gmail.com, :7102, :5 Rue melon, :59230, :France, :$date)
+    $table_test_php_3 = $maConnexion->prepare("
+         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_join)
+         VALUES (:nom1, :prenom1, :email1, :password1, :adresse1, :code_postal1, :pays1, :date_join1),
+                (:nom2, :prenom2, :email2, :password2, :adresse2, :code_postal2, :pays2, :date_join2)
     ");
 
-    $table_test_php->bindParam(':Banne', $nom);
-    $table_test_php->bindParam(':Martin', $nom);
-    $table_test_php->bindParam(':Mac', $prenom);
-    $table_test_php->bindParam(':Vom', $prenom);
-    $table_test_php->bindParam(':b.mac@gmail.com', $email);
-    $table_test_php->bindParam(':m.vom@gmail.com', $email);
-    $table_test_php->bindParam(':3498', $password);
-    $table_test_php->bindParam(':7102', $password);
-    $table_test_php->bindParam(':3 Rue du bouchon', $adresse);
-    $table_test_php->bindParam(':5 Rue melon', $adresse);
-    $table_test_php->bindParam(':59810', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':59230', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
+    $table_test_php_3->bindParam(':nom1', $nom1);
+    $table_test_php_3->bindParam(':nom2', $nom2);
+    $table_test_php_3->bindParam(':prenom1', $prenom1);
+    $table_test_php_3->bindParam(':prenom2', $prenom2);
+    $table_test_php_3->bindParam(':email1', $email1);
+    $table_test_php_3->bindParam(':email2', $email2);
+    $table_test_php_3->bindParam(':password1', $pass1);
+    $table_test_php_3->bindParam(':password2', $pass2);
+    $table_test_php_3->bindParam(':adresse1', $adresse1);
+    $table_test_php_3->bindParam(':adresse2', $adresse2);
+    $table_test_php_3->bindParam(':code_postal1', $code_postal1);
+    $table_test_php_3->bindParam(':code_postal2', $code_postal2);
+    $table_test_php_3->bindParam(':pays1', $pays);
+    $table_test_php_3->bindParam(':pays2', $pays);
+    $table_test_php_3->bindParam(':date_join1', $date1);
+    $table_test_php_3->bindParam(':date_join2', $date2);
 
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $dt1 = new DateTime();
+    $date1 = $dt1->format('Y-m-d H:i:s');
+
+    $dt2 = new DateTime();
+    $date2 = $dt2->format('Y-m-d H:i:s');
+
+    $nom1 = 'Banne';
+    $nom2 = 'Martin';
+    $prenom1 = 'Mac';
+    $prenom2 = 'Vom';
+    $email1 = 'b.mac@gmail.com';
+    $email2 = 'm.vom@gmail.com';
+    $pass1 = '3498';
+    $pass2 = '7102';
+    $adresse1 = '3 Rue du bouchon';
+    $adresse2 = '5 Rue melon';
+    $code_postal1 = '59810';
+    $code_postal2 = '59230';
+    $pays1 = 'France';
+    $pays2 = 'France';
+
+    $table_test_php_3->execute();
+
+    $maConnexion->commit();
 
     /**
      * 4. En une seule requête, ajoutez deux produits à la table produit.
-     */
+    */
 
     // TODO Votre code ici.
 
-    $titre = sanitize('miel');
-    $titre = sanitize('chocolat');
-    $prix = sanitize('3');
-    $prix = sanitize('1');
-    $description_courte = sanitize('miel des abeille');
-    $description_courte = sanitize('tablette de chocolat');
-    $description_longue = sanitize('miel liquide fabriqué par des abeille pendant un été');
-    $description_longue = sanitize('tablette de chocolat au lait de 200g');
+    $maConnexion->beginTransaction();
 
-    $table_test_php = $maConnexion->prepare("
+    $table_test_php_4 = $maConnexion->prepare("
          INSERT INTO produit (titre, prix, description_courte, description_longue)
-         VALUES (:miel, :3, :miel des abeille, :miel liquide fabriqué par des abeille pendant un été),
-         VALUES (:chocolat, :1, :tablette de chocolat, :tablette de chocolat au lait de 200g)
+         VALUES (:titre1, :prix1, :description_courte1, :description_longue1),
+                (:titre2, :prix2, :description_courte2, :description_longue2)
     ");
 
-    $table_test_php->bindParam(':miel', $titre);
-    $table_test_php->bindParam(':chocolat', $titre);
-    $table_test_php->bindParam(':3', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':1', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':miel des abeille', $description_courte);
-    $table_test_php->bindParam(':tablette de chocolat', $description_courte);
-    $table_test_php->bindParam(':miel liquide fabriqué par des abeille pendant un été', $description_longue);
-    $table_test_php->bindParam(':tablette de chocolat au lait de 200g', $description_longue);
+    $table_test_php_4->bindParam(':titre1', $titre1);
+    $table_test_php_4->bindParam(':titre2', $titre2);
+    $table_test_php_4->bindParam(':prix1', $prix1);
+    $table_test_php_4->bindParam(':prix2', $prix2);
+    $table_test_php_4->bindParam(':description_courte1', $description_courte1);
+    $table_test_php_4->bindParam(':description_courte2', $description_courte2);
+    $table_test_php_4->bindParam(':description_longue1', $description_longue1);
+    $table_test_php_4->bindParam(':description_longue2', $description_longue2);
 
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $titre1 = 'miel';
+    $titre2 = 'chocolat';
+    $prix1 = '3';
+    $prix2 = '1';
+    $description_courte1 = 'miel des abeille';
+    $description_courte2 = 'tablette de chocolat';
+    $description_longue1 = 'miel liquide fabriqué par des abeille pendant un été';
+    $description_longue2 = 'tablette de chocolat au lait de 200g';
+
+    $table_test_php_4->execute();
+
+    $maConnexion->commit();
 
     /**
      * 5. A l'aide des méthodes beginTransaction, commit et rollBack, insérez trois nouveaux utilisateurs dans la table utilisateur.
-     */
+    */
 
     // TODO Votre code ici.
 
-    $nom = sanitize('Color');
-    $nom = sanitize('Pate');
-    $nom = sanitize('Violet');
-    $prenom = sanitize('Will');
-    $prenom = sanitize('Paffe');
-    $prenom = sanitize('Blanc');
-    $email = sanitize('c.will@gmail.com');
-    $email = sanitize('p.paffe@gmail.com');
-    $email = sanitize('v.blanc@gmail.com');
-    $password = sanitize('6082');
-    $password = sanitize('9345');
-    $password = sanitize('4071');
-    $adresse = sanitize('1 Rue point');
-    $adresse = sanitize('6 Rue pontton');
-    $adresse = sanitize('4 Rue du marrais');
-    $code_postal = sanitize('59764');
-    $code_postal = sanitize('59342');
-    $code_postal = sanitize('59214');
-    $pays = sanitize('France');
-    $pays = sanitize('France');
-    $pays = sanitize('France');
-    $date_enregistrement = sanitize($date);
-    $date_enregistrement = sanitize($date);
-    $date_enregistrement = sanitize($date);
+    $maConnexion->beginTransaction();
 
-    $table_test_php = $maConnexion->prepare("
-         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_enregistrement)
-         VALUES (:Color, :Will, :c.will@gmail.com, :6082, :1 Rue point, :59764, :France, :$date),
-         VALUES (:Pate, :Paffe, :p.paffe@gmail.com, :9345, :6 Rue pontton, :59342, :France, :$date),
-         VALUES (:Violet, :Blanc, :v.blanc@gmail.com, :4071, :4 Rue du marrais, :59214, :France, :$date)
+    $table_test_php_5 = $maConnexion->prepare("
+         INSERT INTO utilisateur (nom, prenom, email, password, adresse, code_postal, pays, date_join)
+         VALUES (:nom1, :prenom1, :email1, :password1, :adresse1, :code_postal1, :pays1, :date_join1),
+                (:nom2, :prenom2, :email2, :password2, :adresse2, :code_postal2, :pays2, :date_join2),
+                (:nom3, :prenom3, :email3, :password3, :adresse3, :code_postal3, :pays3, :date_join3)
     ");
 
-    $table_test_php->bindParam(':Color', $nom);
-    $table_test_php->bindParam(':Pate', $nom);
-    $table_test_php->bindParam(':Violet', $nom);
-    $table_test_php->bindParam(':Will', $prenom);
-    $table_test_php->bindParam(':Paffe', $prenom);
-    $table_test_php->bindParam(':Blanc', $prenom);
-    $table_test_php->bindParam(':c.will@gmail.com', $email);
-    $table_test_php->bindParam(':p.paffe@gmail.com', $email);
-    $table_test_php->bindParam(':v.blanc@gmail.com', $email);
-    $table_test_php->bindParam(':6082', $password);
-    $table_test_php->bindParam(':9345', $password);
-    $table_test_php->bindParam(':4071', $password);
-    $table_test_php->bindParam(':1 Rue point', $adresse);
-    $table_test_php->bindParam(':6 Rue pontton', $adresse);
-    $table_test_php->bindParam(':4 Rue du marrais', $adresse);
-    $table_test_php->bindParam(':59764', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':59342', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':59214', $code_postal,PDO::PARAM_INT);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':France', $pays);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
-    $table_test_php->bindParam(':$date', $date_enregistrement);
+    $table_test_php_5->bindParam(':nom1', $nom1);
+    $table_test_php_5->bindParam(':nom2', $nom2);
+    $table_test_php_5->bindParam(':nom3', $nom3);
+    $table_test_php_5->bindParam(':prenom1', $prenom1);
+    $table_test_php_5->bindParam(':prenom2', $prenom2);
+    $table_test_php_5->bindParam(':prenom3', $prenom3);
+    $table_test_php_5->bindParam(':email1', $email1);
+    $table_test_php_5->bindParam(':email2', $email2);
+    $table_test_php_5->bindParam(':email3', $email3);
+    $table_test_php_5->bindParam(':password1', $pass1);
+    $table_test_php_5->bindParam(':password2', $pass2);
+    $table_test_php_5->bindParam(':password3', $pass3);
+    $table_test_php_5->bindParam(':adresse1', $adresse1);
+    $table_test_php_5->bindParam(':adresse2', $adresse2);
+    $table_test_php_5->bindParam(':adresse3', $adresse3);
+    $table_test_php_5->bindParam(':code_postal1', $code_postal1);
+    $table_test_php_5->bindParam(':code_postal2', $code_postal2);
+    $table_test_php_5->bindParam(':code_postal3', $code_postal3);
+    $table_test_php_5->bindParam(':pays1', $pays1);
+    $table_test_php_5->bindParam(':pays2', $pays2);
+    $table_test_php_5->bindParam(':pays3', $pays3);
+    $table_test_php_5->bindParam(':date_join1', $date1);
+    $table_test_php_5->bindParam(':date_join2', $date2);
+    $table_test_php_5->bindParam(':date_join3', $date3);
 
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $dt1 = new DateTime();
+    $date1 = $dt1->format('Y-m-d H:i:s');
+
+    $dt2 = new DateTime();
+    $date2 = $dt2->format('Y-m-d H:i:s');
+
+    $dt3 = new DateTime();
+    $date3 = $dt3->format('Y-m-d H:i:s');
+
+    $nom1 = 'Color';
+    $nom2 = 'Pate';
+    $nom3 = 'Violet';
+    $prenom1 = 'Will';
+    $prenom2 = 'Paffe';
+    $prenom3 = 'Blanc';
+    $email1 = 'c.will@gmail.com';
+    $email2 = 'p.paffe@gmail.com';
+    $email3 = 'v.blanc@gmail.com';
+    $pass1 = '6082';
+    $pass2 = '9345';
+    $pass3 = '4071';
+    $adresse1 = '1 Rue point';
+    $adresse2 = '6 Rue pontton';
+    $adresse3 = '4 Rue du marrais';
+    $code_postal1 = '59764';
+    $code_postal2 = '59342';
+    $code_postal3 = '59214';
+    $pays1 = 'France';
+    $pays2 = 'France';
+    $pays3 = 'France';
+
+    $table_test_php_5->execute();
+
+    $maConnexion->commit();
 
     /**
      * 6. A l'aide des méthodes beginTransaction, commit et rollBack, insérez trois nouveaux produits dans la table produit.
      */
 
-    $titre = sanitize('lait');
-    $titre = sanitize('oeuf');
-    $titre = sanitize('fromage');
-    $prix = sanitize('2');
-    $prix = sanitize('1');
-    $prix = sanitize('3');
-    $description_courte = sanitize('lait de vache');
-    $description_courte = sanitize('oeuf de poule');
-    $description_courte = sanitize('fromage raclette');
-    $description_longue = sanitize('bouteille de un litre demi écrémé');
-    $description_longue = sanitize('oeuf de poule élevé en plaine et au grain');
-    $description_longue = sanitize('fait au lait de vache pasteurisé');
+    $maConnexion->beginTransaction();
 
-    $table_test_php = $maConnexion->prepare("
+    $table_test_php_6 = $maConnexion->prepare("
          INSERT INTO produit (titre, prix, description_courte, description_longue)
-         VALUES (:lait, :2, :lait de vache, :bouteille de un litre demi écrémé),
-         VALUES (:oeuf, :1, :oeuf de poule, :oeuf de poule élevé en plaine et au grain),
-         VALUES (:fromage, :3, :fromage raclette, :fait au lait de vache pasteurisé)
+         VALUES (:titre1, :prix1, :description_courte1, :description_longue1),
+                (:titre2, :prix2, :description_courte2, :description_longue2),
+                (:titre3, :prix3, :description_courte3, :description_longue3)
     ");
 
-    $table_test_php->bindParam(':lait', $titre);
-    $table_test_php->bindParam(':oeuf', $titre);
-    $table_test_php->bindParam(':fromage', $titre);
-    $table_test_php->bindParam(':2', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':1', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':3', $prix,PDO::PARAM_INT);
-    $table_test_php->bindParam(':lait de vache', $description_courte);
-    $table_test_php->bindParam(':oeuf de poule', $description_courte);
-    $table_test_php->bindParam(':fromage raclette', $description_courte);
-    $table_test_php->bindParam(':bouteille de un litre demi écrémé', $description_longue);
-    $table_test_php->bindParam(':oeuf de poule élevé en plaine et au grain', $description_longue);
-    $table_test_php->bindParam(':fait au lait de vache pasteurisé', $description_longue);
+    $table_test_php_6->bindParam(':titre1', $titre1);
+    $table_test_php_6->bindParam(':titre2', $titre2);
+    $table_test_php_6->bindParam(':titre3', $titre3);
+    $table_test_php_6->bindParam(':prix1', $prix1);
+    $table_test_php_6->bindParam(':prix2', $prix2);
+    $table_test_php_6->bindParam(':prix3', $prix3);
+    $table_test_php_6->bindParam(':description_courte1', $description_courte1);
+    $table_test_php_6->bindParam(':description_courte2', $description_courte2);
+    $table_test_php_6->bindParam(':description_courte3', $description_courte3);
+    $table_test_php_6->bindParam(':description_longue1', $description_longue1);
+    $table_test_php_6->bindParam(':description_longue2', $description_longue2);
+    $table_test_php_6->bindParam(':description_longue3', $description_longue3);
 
-    $result = $maConnexion->exec($table_test_php);
-    echo $result;
+    $titre1 = 'lait';
+    $titre2 = 'oeuf';
+    $titre3 = 'fromage';
+    $prix1 = '2';
+    $prix2 = '5';
+    $prix2 = '3';
+    $description_courte1 = 'lait de vache';
+    $description_courte2 = 'oeuf de poule';
+    $description_courte3 = 'fromage raclette';
+    $description_longue1 = 'bouteille de un litre demi écrémé';
+    $description_longue2 = 'oeuf de poule élevé en plaine et au grain';
+    $description_longue3 = 'fait au lait de vache pasteurisé';
+
+    $table_test_php_6->execute();
+
+    $maConnexion->commit();
 }
 catch (PDOException $exception) {
     echo "Erreur de connexion: " . $exception->getMessage();
